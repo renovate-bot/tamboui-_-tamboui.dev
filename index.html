@@ -41,6 +41,18 @@
             animation: fadeIn 1.5s ease-in;
         }
 
+        .teaser a {
+            color: #ffffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .teaser a:hover {
+            border-bottom-color: rgba(255, 255, 255, 0.8);
+            opacity: 1;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -66,7 +78,7 @@
 <body>
     <div class="container">
         <h1>tamboui.dev</h1>
-        <p class="teaser">Coming Soon...</p>
+        <p class="teaser">Coming <a href="demos">Soon</a>...</p>
     </div>
 </body>
 </html>
