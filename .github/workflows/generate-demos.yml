@@ -29,7 +29,7 @@ jobs:
           brew install agentstation/tap/vhs
       
       - name: Install jbang
-        uses: jbangdev/setup-jbang@v1
+        uses: jbangdev/setup-jbang@main
       
       - name: Clone tamboui repository
         run: |
