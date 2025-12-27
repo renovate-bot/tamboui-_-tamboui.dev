@@ -19,7 +19,7 @@ jobs:
       - name: Checkout tamboui.dev
         uses: actions/checkout@v4
         with:
-          path: tamboui-dev
+          path: tamboui.dev
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Install vhs (agentstation fork with SVG support)
@@ -31,51 +31,57 @@ jobs:
       - name: Install jbang
         uses: jbangdev/setup-jbang@main
 
-      - name: Configure snapshot repo
-        run: jbang config set run.repos central,sonatype-snapshots=https://central.sonatype.com/repository/maven-snapshots/
-      
       - name: Clone tamboui repository
         run: |
-          git clone https://github.com/tamboui/tamboui.git tamboui-repo
+          git clone https://github.com/tamboui/tamboui.git tamboui
+
+      - name: build and publish to maven local
+        working-directory: tamboui
+        run: |
+            ./gradlew publishToMavenLocal -x test -x javadoc
+        
+      - name: prebuild demo jars
+        run: |
+            jbang alias list --format json | jq  '.[].name' | xargs -n1 jbang build
       
       - name: Generate demo videos
-        working-directory: tamboui-repo/docs/video
+        working-directory: tamboui/docs/video
         run: |
           jbang generate.java svg
       
       - name: Setup Git for gh-pages
         run: |
-          cd tamboui-dev
+          cd tamboui.dev
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Checkout gh-pages branch
         run: |
-          cd tamboui-dev
+          cd tamboui.dev
           git fetch origin gh-pages:gh-pages || true
           git checkout gh-pages || git checkout -b gh-pages
       
       - name: Copy generated videos to demos directory
         run: |
           # Check if output directory exists and has files
-          if [ ! -d "tamboui-repo/docs/video/output" ]; then
+          if [ ! -d "tamboui/docs/video/output" ]; then
             echo "Error: output directory does not exist"
             exit 1
           fi
-          if [ -z "$(ls -A tamboui-repo/docs/video/output)" ]; then
+          if [ -z "$(ls -A tamboui/docs/video/output)" ]; then
             echo "Error: output directory is empty"
             exit 1
           fi
           # Remove old demos directory if it exists
-          rm -rf tamboui-dev/demos
+          rm -rf tamboui.dev/demos
           # Create demos directory
-          mkdir -p tamboui-dev/demos
+          mkdir -p tamboui.dev/demos
           # Copy all files from output directory
-          cp -r tamboui-repo/docs/video/output/* tamboui-dev/demos/
+          cp -r tamboui/docs/video/output/* tamboui.dev/demos/
       
       - name: Commit and push to gh-pages
         run: |
-          cd tamboui-dev
+          cd tamboui.dev
           git add demos/
           if ! git diff --staged --quiet; then
             git commit -m "Update demo videos [skip ci]"
