@@ -56,11 +56,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
+      - name: Save main branch files to copy into gh-pages
+        run: |
+          cd tamboui.dev
+          # Create a temporary directory to store main branch files
+          mkdir -p ../main-branch-files
+          # Copy all files from main branch (excluding .git)
+          find . -maxdepth 1 -type f -not -name '.git*' -exec cp {} ../main-branch-files/ \;
+      
       - name: Checkout gh-pages branch
         run: |
           cd tamboui.dev
           git fetch origin gh-pages:gh-pages || true
           git checkout gh-pages || git checkout -b gh-pages
+      
+      - name: Copy main branch files to gh-pages
+        run: |
+          cd tamboui.dev
+          # Copy files from main branch (excluding demos, which will be updated separately)
+          cp ../main-branch-files/* . 2>/dev/null || true
       
       - name: Copy generated videos to demos directory
         run: |
@@ -83,9 +97,9 @@ jobs:
       - name: Commit and push to gh-pages
         run: |
           cd tamboui.dev
-          git add demos/
+          git add .
           if ! git diff --staged --quiet; then
-            git commit -m "Update demo videos [skip ci]"
+            git commit -m "Update site files and demo videos [skip ci]"
             git push origin gh-pages
           else
             echo "No changes to commit"
