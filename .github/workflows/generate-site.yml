@@ -24,40 +24,6 @@ jobs:
         with:
           path: tamboui.dev
           token: ${{ secrets.GITHUB_TOKEN }}
-  
-      - name: Clone tamboui repository
-        run: |
-          git clone https://github.com/tamboui/tamboui.git tamboui
-       
-      # TODO: maybe we dont build here but take it from tamboui build artifacts?
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          distribution: 'graalvm'
-          java-version: '25'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: gradle/actions/wrapper-validation@v4
-      
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Execute Gradle docs build
-        working-directory: tamboui
-        run: ./gradlew asciidoc
-      
-      - name: Setup Git for gh-pages
-        run: |
-          cd tamboui.dev
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-      
-      - name: Save main branch files to copy into gh-pages
-        run: |
-          cd tamboui.dev
-          # Create a temporary directory to store main branch files
-          mkdir -p ../main-branch-files
-          # Copy all files from main branch (excluding .git)
-          find . -maxdepth 1 -type f -not -name '.git*' -exec cp {} ../main-branch-files/ \;
-      
       - name: Checkout gh-pages branch
         run: |
           cd tamboui.dev
@@ -68,28 +34,7 @@ jobs:
         run: |
           cd tamboui.dev
           # Copy files from main branch (excluding demos, which will be updated separately)
-          cp ../main-branch-files/* . 2>/dev/null || true
-      
-      - name: Copy generated videos to demos directory
-        run: |
-          # Check if output directory exists and has files
-          if [ ! -d "${{ env.builtdocs }}" ]; then
-            echo "Error: built docs directory does not exist"
-            exit 1
-          fi
-          if [ -z "$(ls -A ${{ env.builtdocs }})" ]; then
-            echo "Error: built docs directory is empty"
-            exit 1
-          fi
-          # Remove old docs directory if it exists
-          rm -rf ${{ env.sitedocs }}
-          # Create docs directory
-          mkdir -p ${{ env.sitedocs }}
-          # Copy all files from output directory
-          cp -r ${{ env.builtdocs }}/* ${{ env.sitedocs }}/
-          # add .nojekyll file to docs directory
-          touch tamboui.dev/.nojekyll
-      
+          cp ../main-branch-files/* . 2>/dev/null || true 
       - name: Commit and push to gh-pages
         run: |
           cd tamboui.dev
