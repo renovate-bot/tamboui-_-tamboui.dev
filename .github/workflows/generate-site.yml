@@ -14,16 +14,23 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
-    env:
-      builtdocs: tamboui/docs/build/docs
-      sitedocs: tamboui.dev/docs/main
+
     
     steps:
-      - name: Checkout tamboui.dev
+      - name: Checkout tamboui.dev (main branch)
         uses: actions/checkout@v4
         with:
           path: tamboui.dev
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+      
+      - name: Save main branch files
+        run: |
+          cd tamboui.dev
+          mkdir -p ../main-files
+          cp * ../main-files/ 2>/dev/null || true
+          rm ../main-files/README.md || true
+          
       - name: Checkout gh-pages branch
         run: |
           cd tamboui.dev
@@ -33,8 +40,9 @@ jobs:
       - name: Copy main branch files to gh-pages
         run: |
           cd tamboui.dev
-          # Copy files from main branch (excluding demos, which will be updated separately)
-          cp ../main-branch-files/* . 2>/dev/null || true 
+          # Copy files from main branch, leaving other gh-pages files intact
+          cp ../main-files/* . 2>/dev/null || true
+          rm -rf ../main-files 
       - name: Commit and push to gh-pages
         run: |
           cd tamboui.dev
