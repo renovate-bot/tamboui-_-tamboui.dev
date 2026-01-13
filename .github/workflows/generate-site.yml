@@ -30,6 +30,11 @@ jobs:
           git clone https://github.com/tamboui/tamboui.git tamboui
        
       # TODO: maybe we dont build here but take it from tamboui build artifacts?
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          distribution: 'graalvm'
+          java-version: '25'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: gradle/actions/wrapper-validation@v4
       
       - name: Setup Gradle
