@@ -445,6 +445,7 @@
         }
 
         .check-icon {
+            display: none;
             width: 1rem;
             height: 1rem;
             fill: currentColor;
@@ -697,7 +698,7 @@
                 transform: translateX(0) translateY(-8px) !important;
             }
 
-            .code-block {
+            .code-block pre {
                 font-size: 0.8rem;
             }
         }
@@ -720,7 +721,7 @@
         <div class="hero-content">
             <h1 class="sr-only">TamboUI</h1>
             <img src="assets/images/tambuilogo.png" alt="TamboUI" class="logo-image">
-            <h2 class="hero-title">Terminal's with a little bit of spice<span class="sparkle">😊</span></h2>
+            <h2 class="hero-title">Terminals with a little bit of spice<span class="sparkle">😊</span></h2>
             <p class="tagline">Build beautiful, modern terminal interfaces in Java</p>
             <p class="hero-description">
                 TamboUI brings the <span class="highlight">power and elegance</span> known from Rust's ratatui, and Python's Textual to Java. 
@@ -790,7 +791,8 @@
                     <span class="why-icon">🌍</span>
                     <h3 class="why-title">Works Everywhere</h3>
                     <p class="why-description">
-                        Cross-platform, works everywhere Java runs. Particularly well on Windows, Linux and MacOS!
+                        Runs on all platforms that suports Java, including Windows, Linux and MacOS! 
+                        <br/>Full Unicode support including emoji (🎉 🚀 💻), multicharacters (你好 مرحبا नमस्ते), and ZWJ sequences (👨‍👩‍👧‍👦 👨‍💻 🏳️‍🌈).
                     </p>
                 </div>
             </div>
@@ -830,7 +832,7 @@
                         Direct terminal control. You manage the event loop, drawing, and all state. 
                         Perfect for learning how things work or building custom abstractions.
                     </p>
-                    <p class="api-use">Use when: You want maximum control and speed</p>
+                    <p class="api-use">Use when: You want maximum control and speed or you want to create new widgets</p>
                 </div>
             </div>
         </div>
@@ -848,41 +850,25 @@
                     <svg class="copy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                     </svg>
-                    <svg class="check-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <svg class="check-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                     </svg>
                 </button>
-                <pre><code id="code-content"><span class="comment">//DEPS dev.tamboui:tamboui-tui:LATEST
-//DEPS dev.tamboui:tamboui-jline:LATEST</span>
+                <pre><code id="code-content"><span class="comment">///usr/bin/env jbang "$0" "$@" ; exit $?
+//DEPS dev.tamboui:tamboui-toolkit:LATEST
+//DEPS dev.tamboui:tamboui-panama-backend:LATEST
+</span>
+<span class="keyword">import</span> dev.tamboui.toolkit.app.ToolkitRunner;
+<span class="keyword">import static</span> dev.tamboui.toolkit.Toolkit.markupText;
 
-<span class="keyword">package</span> dev.tamboui.demo;
-
-<span class="keyword">import</span> dev.tamboui.tui.TuiRunner;
-<span class="keyword">import</span> dev.tamboui.tui.Keys;
-<span class="keyword">import</span> dev.tamboui.widgets.paragraph.Paragraph;
-<span class="keyword">import</span> dev.tamboui.text.Text;
-
-<span class="keyword">public class</span> <span class="type">HelloWorldTuiDemo</span> {
-    <span class="keyword">public static void</span> <span class="function">main</span>(<span class="type">String</span>[] args) <span class="keyword">throws</span> <span class="type">Exception</span> {
-        <span class="keyword">try</span> (<span class="keyword">var</span> tui = <span class="type">TuiRunner</span>.<span class="function">create</span>()) {
-            tui.<span class="function">run</span>(
-                (event, runner) -> {
-                    <span class="keyword">if</span> (<span class="type">Keys</span>.<span class="function">isQuit</span>(event)) {
-                        runner.<span class="function">quit</span>();
-                        <span class="keyword">return</span> <span class="keyword">false</span>;
-                    }
-                    <span class="keyword">return</span> <span class="keyword">false</span>;
-                },
-                frame -> {
-                    <span class="keyword">var</span> paragraph = <span class="type">Paragraph</span>.<span class="function">builder</span>()
-                        .<span class="function">text</span>(<span class="type">Text</span>.<span class="function">from</span>(<span class="string">"Hello, TamboUI! Press 'q' to quit."</span>))
-                        .<span class="function">build</span>();
-                    frame.<span class="function">renderWidget</span>(paragraph, frame.<span class="function">area</span>());
-                }
-            );
-        }
+<span class="function">void main()</span> <span class="keyword">throws</span> <span class="type">Exception</span> {
+    <span class="keyword">try</span> (<span class="keyword">var</span> runner = ToolkitRunner.create()) {
+        runner.run(() -&gt;
+            markupText(<span class="string">"Hello, [red]TamboUI[/red]! Press [blue]q[/] to exit!"</span>)
+        );
     }
-}</code></pre>
+}
+<code></pre>
             </div>
             <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary);">
                 Save as <code style="background: var(--code-bg); padding: 0.25rem 0.5rem; border-radius: 4px;">HelloWorld.java</code> and run with <code style="background: var(--code-bg); padding: 0.25rem 0.5rem; border-radius: 4px;">jbang HelloWorld.java</code>
