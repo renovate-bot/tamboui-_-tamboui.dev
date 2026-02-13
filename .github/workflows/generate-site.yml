@@ -41,7 +41,7 @@ jobs:
         run: |
           cd tamboui.dev
           # Copy files from main branch, leaving other gh-pages files intact
-          cp ../main-files/* . 2>/dev/null || true
+          cp -r ../main-files/* . 2>/dev/null || true
           rm -rf ../main-files 
       - name: Commit and push to gh-pages
         run: |
