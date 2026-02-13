@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TamboUI - Build beautiful terminal UIs in Java. Modern, powerful, and fun. Inspired by ratatui and bubbletea.">
+    <title>TamboUI - Terminal UIs That Make Java Developers Smile 😊</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141b2d;
+            --bg-tertiary: #1e2838;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-glow: rgba(0, 212, 255, 0.4);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --code-bg: #0f172a;
+            --code-border: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Sticky top banner */
+        .top-banner {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 14, 39, 0.78);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .top-banner-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .top-banner-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+        }
+
+        .top-banner-brand:hover {
+            color: var(--accent-primary);
+        }
+
+        .top-banner-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(51, 65, 85, 0.7);
+            background: rgba(20, 27, 45, 0.5);
+        }
+
+        .top-banner-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .top-banner-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.45rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .top-banner-link:hover {
+            color: var(--accent-primary);
+            border-color: rgba(0, 212, 255, 0.35);
+            background: rgba(0, 212, 255, 0.06);
+        }
+
+        .top-banner-cta {
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 18px rgba(0, 212, 255, 0.15);
+        }
+
+        .top-banner-cta:hover {
+            color: var(--text-primary);
+            border-color: transparent;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            box-shadow: 0 8px 26px rgba(0, 212, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+        }
+
+        .logo-image {
+            width: min(400px, 75vw);
+            height: auto;
+            display: block;
+            margin: 0 auto 2rem;
+            filter: drop-shadow(0 12px 40px rgba(0, 212, 255, 0.3));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 50%, var(--success) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 0.8s ease-out;
+            line-height: 1.1;
+        }
+
+        .tagline {
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 500;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .subtagline {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .highlight {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Why Section */
+        .why-section {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .why-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            margin-bottom: 4rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .why-card {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .why-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .why-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
+        }
+
+        .why-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .why-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .why-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Example */
+        .code-section {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .code-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin-top: 2rem;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-block::before {
+            content: 'java';
+            position: absolute;
+            top: 1rem;
+            right: 3.5rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            font-family: inherit;
+        }
+
+        .copy-button:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        .copy-button.copied {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .copy-icon {
+            width: 1rem;
+            height: 1rem;
+            fill: currentColor;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover .copy-icon {
+            fill: var(--bg-primary);
+        }
+
+        .copy-button.copied .copy-icon {
+            display: none;
+        }
+
+        .check-icon {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            fill: currentColor;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button.copied .check-icon {
+            display: block;
+            fill: white;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        /* Ensure token spans never get a background */
+        .code-block code,
+        .code-block code span {
+            background: transparent;
+        }
+
+        /* Ensure code text stays readable on dark background */
+        .code-block code {
+            color: var(--text-primary);
+        }
+
+        .inline-code {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95em;
+        }
+
+        .code-block .keyword { color: #c792ea; }
+        .code-block .string { color: #c3e88d; }
+        .code-block .comment { color: var(--text-muted); font-style: italic; }
+        .code-block .function { color: #82aaff; }
+        .code-block .type { color: #ffcb6b; }
+
+        /* API Levels Section */
+        .api-levels {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .api-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .api-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .api-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            margin-left: 0;
+            margin-right: 0;
+            z-index: 1;
+        }
+
+        /* Stack effect - each layer offset */
+        .api-card:nth-child(1) {
+            z-index: 3;
+            transform: translateX(0) translateY(0);
+            border-left: 4px solid var(--success);
+        }
+
+        .api-card:nth-child(2) {
+            z-index: 2;
+            transform: translateX(20px) translateY(-10px);
+            border-left: 4px solid var(--accent-primary);
+            margin-top: -1rem;
+        }
+
+        .api-card:nth-child(3) {
+            z-index: 1;
+            transform: translateX(40px) translateY(-20px);
+            border-left: 4px solid var(--accent-secondary);
+            margin-top: -1rem;
+        }
+
+        .api-card:hover {
+            transform: translateX(0) translateY(-8px) !important;
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.25);
+            z-index: 10 !important;
+        }
+
+        .api-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .api-badge.low { 
+            background: rgba(16, 185, 129, 0.2); 
+            color: var(--success); 
+        }
+        .api-badge.mid { 
+            background: rgba(0, 212, 255, 0.2); 
+            color: var(--accent-primary); 
+        }
+        .api-badge.high { 
+            background: rgba(124, 58, 237, 0.2); 
+            color: var(--accent-secondary); 
+        }
+
+        .api-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .api-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .api-use {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Stack connector lines */
+        .api-card::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-color));
+            transform: translateX(-100%);
+            opacity: 0.5;
+        }
+
+        .api-card:nth-child(1)::after {
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::after {
+            content: '↓';
+            font-size: 2rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            html:focus-within {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            /* Explicitly disable continuous/key animations used on this page */
+            .hero::before,
+            .logo-image,
+            .hero-title,
+            .tagline,
+            .subtagline,
+            .hero-description,
+            .cta-buttons,
+            .scroll-indicator,
+            .sparkle {
+                animation: none !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-banner-inner {
+                padding: 0.65rem 1rem;
+            }
+
+            .top-banner-link {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.95rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .logo-image {
+                width: min(300px, 80vw);
+            }
+
+            .tagline {
+                font-size: 1.4rem;
+            }
+
+            .subtagline {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid,
+            .why-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .api-stack {
+                margin-top: 2rem;
+            }
+
+            .api-card:nth-child(2),
+            .api-card:nth-child(3) {
+                transform: translateX(10px) translateY(-5px) !important;
+                margin-top: -0.5rem;
+            }
+
+            .api-card:hover {
+                transform: translateX(0) translateY(-8px) !important;
+            }
+
+            .code-block pre {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Fun elements */
+        .sparkle {
+            display: inline-block;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-banner" role="banner">
+        <div class="top-banner-inner">
+            <a class="top-banner-brand" href="./" aria-label="TamboUI home">
+                <img class="top-banner-logo" src="assets/images/tamboui_icon_gradient.svg" alt="" aria-hidden="true">
+                <span>TamboUI</span>
+            </a>
+            <nav class="top-banner-nav" aria-label="Primary">
+                <a class="top-banner-link" href="docs/main" target="_blank" rel="noopener noreferrer">Docs</a>
+                <a class="top-banner-link" href="docs/main/demos-widgets.html" target="_blank" rel="noopener noreferrer">Examples</a>
+                <a class="top-banner-link" href="https://github.com/tamboui/tamboui" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a class="top-banner-link top-banner-cta" href="docs/main" target="_blank" rel="noopener noreferrer">Get started</a>
+            </nav>
+        </div>
+    </header>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="sr-only">TamboUI</h1>
+            <img src="assets/images/tamboui_logo_vertical_gradient.svg" alt="TamboUI" class="logo-image">
+            <h2 class="hero-title">Terminals with a little bit of spice<span class="sparkle">😊</span></h2>
+            <p class="tagline">Build beautiful, modern terminal interfaces in Java</p>
+            <p class="hero-description">
+                TamboUI brings the <span class="highlight">power and elegance</span> known from Rust's ratatui, and Python's Textual to Java. 
+                Write <span class="highlight">declarative UIs</span> with CSS styling, build <span class="highlight">native executables</span>, 
+                and create terminal apps that make you <span class="highlight">proud</span>.
+            </p>
+            <div class="cta-buttons">
+                <a href="docs/main" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    <span>🚀 Get Started</span>
+                </a>
+                <a href="https://github.com/tamboui/tamboui" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                    <span>⭐ Star on GitHub</span>
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- Why Section -->
+    <section class="why-section">
+        <div class="why-container">
+            <h2 class="section-title">Why TamboUI?</h2>
+            <p class="section-subtitle">
+                Because terminal UIs shouldn't be an afterthought. They should be a joy to build.
+            </p>
+            <div class="why-grid">
+                <div class="why-card">
+                    <span class="why-icon">🎯</span>
+                    <h3 class="why-title">Choose Your Adventure</h3>
+                    <p class="why-description">
+                        Three API levels: immediate mode for control freaks, TuiRunner for the pragmatic, 
+                        and Toolkit DSL for the elegant. Pick what fits your style.
+                    </p>
+                </div>
+                <div class="why-card">
+                    <span class="why-icon">🎨</span>
+                    <h3 class="why-title">CSS Styling in the Terminal</h3>
+                    <p class="why-description">
+                        Yes, you read that right. Write TCSS files, switch themes at runtime, 
+                        and separate style from logic. Your designer will thank you.
+                    </p>
+                </div>
+                <div class="why-card">
+                    <span class="why-icon">⚡</span>
+                    <h3 class="why-title">Native Speed, Java Comfort</h3>
+                    <p class="why-description">
+                        Compile to native executables with GraalVM for instant startup. 
+                        Keep writing Java, get native performance. Best of both worlds.
+                    </p>
+                </div>
+                <div class="why-card">
+                    <span class="why-icon">🛠️</span>
+                    <h3 class="why-title">Modern Java, Your Way</h3>
+                    <p class="why-description">
+                        Embrace modern Java features like speed, pattern matching, records, and sealed classes — or run comfortably on Java 8+ with zero compromises.
+                    </p>
+                </div>
+                <div class="why-card">
+                    <span class="why-icon">📦</span>
+                    <h3 class="why-title">Everything You Need</h3>
+                    <p class="why-description">
+                        Tables, charts, lists, gauges, calendars, canvas drawing, image rendering. 
+                        Plus PicoCLI integration. It's all here, ready to use.
+                    </p>
+                </div>
+                <div class="why-card">
+                    <span class="why-icon">🌍</span>
+                    <h3 class="why-title">Works Everywhere</h3>
+                    <p class="why-description">
+                        Runs on all platforms that suports Java, including Windows, Linux and MacOS! 
+                        <br/>Full Unicode support including emoji (🎉 🚀 💻), multicharacters (你好 مرحبا नमस्ते), and ZWJ sequences (👨‍👩‍👧‍👦 👨‍💻 🏳️‍🌈).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Levels Section -->
+    <section class="api-levels">
+        <div class="api-container">
+            <h2 class="section-title">Three Layers, One Stack</h2>
+            <p class="section-subtitle">
+                Built from the ground up—each layer adds power and convenience
+            </p>
+            <div class="api-stack">
+                <div class="api-card">
+                    <span class="api-badge high">High Level</span>
+                    <h3 class="api-title">Toolkit</h3>
+                    <p class="api-description">
+                        Declarative, component-based UI with fluent builders. Automatic focus management, 
+                        CSS styling, and event routing. Write less, do more.
+                    </p>
+                    <p class="api-use">Use when: Building most applications—fastest path to a working UI</p>
+                </div>
+                <div class="api-card">
+                    <span class="api-badge mid">Mid Level</span>
+                    <h3 class="api-title">TuiRunner</h3>
+                    <p class="api-description">
+                        Managed event loop with callbacks. Handles terminal setup, event polling, 
+                        and redraws. You focus on your logic, not the plumbing.
+                    </p>
+                    <p class="api-use">Use when: You want custom event handling without boilerplate</p>
+                </div>
+                <div class="api-card">
+                    <span class="api-badge low">Low Level</span>
+                    <h3 class="api-title">Immediate Mode</h3>
+                    <p class="api-description">
+                        Direct terminal control. You manage the event loop, drawing, and all state. 
+                        Perfect for learning how things work or building custom abstractions.
+                    </p>
+                    <p class="api-use">Use when: You want maximum control and speed or you want to create new widgets</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Example Section -->
+    <section class="code-section">
+        <div class="code-container">
+            <h2 class="section-title">Quick Start</h2>
+            <p class="section-subtitle">
+                Get a beautiful TUI running in minutes. No kidding.
+            </p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)" aria-label="Copy code to clipboard">
+                    <svg class="copy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    <svg class="check-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                </button>
+                <pre><code id="code-content"><span class="comment">///usr/bin/env jbang "$0" "$@" ; exit $?
+//DEPS dev.tamboui:tamboui-toolkit:LATEST
+//DEPS dev.tamboui:tamboui-panama-backend:LATEST
+</span>
+<span class="keyword">import</span> dev.tamboui.toolkit.app.ToolkitRunner;
+<span class="keyword">import static</span> dev.tamboui.toolkit.Toolkit.markupText;
+
+<span class="function">void main()</span> <span class="keyword">throws</span> <span class="type">Exception</span> {
+    <span class="keyword">try</span> (<span class="keyword">var</span> runner = ToolkitRunner.create()) {
+        runner.run(() -&gt;
+            markupText(<span class="string">"Hello, [red]TamboUI[/red]! Press [blue]q[/] to exit!"</span>)
+        );
+    }
+}
+<code></pre>
+            </div>
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary);">
+                Save as <code class="inline-code">HelloWorld.java</code> and run with <code class="inline-code">jbang HelloWorld.java</code>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://github.com/tamboui/tamboui" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="docs/" target="_blank" rel="noopener noreferrer">Documentation</a>
+            <a href="https://github.com/tamboui/tamboui/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License</a>
+        </div>
+        <p style="margin-top: 1rem; color: var(--text-muted);">© 2024 TamboUI - MIT License</p>
+        <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">
+            Made with <span style="color: var(--accent-primary);">❤️</span> for Java developers who love the terminal
+        </p>
+    </footer>
+
+    <script>
+        function copyCode(button) {
+            const codeElement = document.getElementById('code-content');
+            const text = codeElement.innerText || codeElement.textContent;
+            
+            // Use the modern Clipboard API
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success feedback
+                button.classList.add('copied');
+                button.setAttribute('aria-label', 'Code copied to clipboard!');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.setAttribute('aria-label', 'Copy code to clipboard');
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    button.classList.add('copied');
+                    button.setAttribute('aria-label', 'Code copied to clipboard!');
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.setAttribute('aria-label', 'Copy code to clipboard');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+    </script>
+</body>
+</html>
