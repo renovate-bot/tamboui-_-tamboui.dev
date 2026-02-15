@@ -1,0 +1,19 @@
+# Tamboui
+
+> TamboUI is a library for building terminal UIs in Java. It is inspired by Ratatui and Textua.
+
+All TamboUI documentation pages are available in LLM-friendly Markdown format by using https://markdown.new/ with any URL.
+
+For example:
+- HTML: https://tamboui.dev/docs/main/index.html
+- Markdown: https://markdown.new/https://tamboui.dev/docs/main/index.html
+
+ ## Documentation
+
+- [Getting Started](https://markdown.new/https://tamboui.dev/docs/main/getting-started.html): Getting started Guide
+- [Core Concepts](https://markdown.new/https://tamboui.dev/docs/main/core-concepts.html): Core concepts of TamboUI
+- [API Levels](https://markdown.new/https://tamboui.dev/docs/main/api-levels.html): API Levels of TamboUI
+- [Bindings](https://markdown.new/https://tamboui.dev/docs/main/bindings.html): Bindings of TamboUI
+- [MVC Architecture](https://markdown.new/https://tamboui.dev/docs/main/mvc-architecture.html): MVC Model of TamboUI
+- [Developer Guide](https://markdown.new/https://tamboui.dev/docs/main/developer-guide.html): Developer Guide covering how to create custom widgets and components in TamboUI
+
